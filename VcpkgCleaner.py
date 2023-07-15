@@ -2,7 +2,7 @@ import os
 import os.path
 import shutil
 
-vcpkg_home = "D:\\Vcpkg\\vcpkg"
+vcpkg_home = "/Users/luoluo/vcpkg"
 
 pdb_fix = ".pdb"
 log_fix = ".log"
@@ -14,6 +14,7 @@ rm_temp = True
 rm_log = True
 rm_src = True
 rm_pdb = True
+rm_download = True
 
 
 def is_build_temp_dir(path):
@@ -75,13 +76,28 @@ def clean_pdb_file(root_dir):
     print("Clean *.pdf in %s: Done!" % os.path.basename(root_dir))
 
 
+def clean_download_file(download_dir):
+    if not rm_download:
+        return
+    dir_list = ['temp', 'tools']
+    for (root, dirs, files) in os.walk(download_dir):
+        if root != download_dir:
+            break
+        for file in files:
+            os.remove(os.path.join(download_dir, file))
+        for dir in dirs:
+            if(dir not in dir_list):
+                shutil.rmtree(os.path.join(download_dir, dir))
+    print("Clean downloads Done!")
+
+
 def clean(home):
     clean_pdb_file(os.path.join(home, "installed"))
     clean_pdb_file(os.path.join(home, "packages"))
     clean_build_build_trees(os.path.join(home, "buildtrees"))
+    clean_download_file(os.path.join(home, "downloads"))
     print("All clear!")
 
 
 if __name__ == '__main__':
     clean(vcpkg_home)
-
